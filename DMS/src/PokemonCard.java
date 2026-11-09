@@ -1,16 +1,13 @@
-
 /*
  * Name: Jacob Kohler
  * Course: CEN 3024
- * Date: October 26, 2026
+ * Date: November 2, 2026
  *
  * Class: PokemonCard
  * Description: Represents a Pokemon card in the DMS.
- * Stores the card's identifying information, rarity, quality,
- * value, and quantity. It validates card information
- * and provides a formatted display of the card and its total value.
+ * Stores and validates the card's identifying information,
+ * rarity, quality, value, and quantity.
  */
-
 public class PokemonCard {
     private String cardID;
     private String cardName;
@@ -38,8 +35,6 @@ public class PokemonCard {
                 || cardName == null || cardName.trim().isEmpty()
                 || setName == null || setName.trim().isEmpty()
                 || cardNumber == null || cardNumber.trim().isEmpty()
-                || rarity == null || rarity.trim().isEmpty()
-                || quality == null || quality.trim().isEmpty()
                 || !Double.isFinite(cardValue) || cardValue < 0
                 || quantity <= 0) {
             throw new IllegalArgumentException("Invalid card information.");
@@ -49,8 +44,8 @@ public class PokemonCard {
         this.cardName = cardName.trim();
         this.setName = setName.trim();
         this.cardNumber = cardNumber.trim();
-        this.rarity = rarity.trim();
-        this.quality = quality.trim();
+        this.rarity = validateRarity(rarity);
+        this.quality = validateQuality(quality);
         this.cardValue = cardValue;
         this.quantity = quantity;
     }
@@ -119,27 +114,21 @@ public class PokemonCard {
         this.cardNumber = cardNumber.trim();
     }
 
-    // Updates the card rarity after validating the input.
+    // Updates the card rarity using one of the supported options.
     public void setRarity(String rarity) {
-        if (rarity == null || rarity.trim().isEmpty()) {
-            throw new IllegalArgumentException("Rarity cannot be empty.");
-        }
-        this.rarity = rarity.trim();
+        this.rarity = validateRarity(rarity);
     }
 
-    // Updates the card quality after validating the input.
+    // Updates the card quality using one of the supported options.
     public void setQuality(String quality) {
-        if (quality == null || quality.trim().isEmpty()) {
-            throw new IllegalArgumentException("Quality cannot be empty.");
-        }
-        this.quality = quality.trim();
+        this.quality = validateQuality(quality);
     }
 
     // Updates the card value after validating the input.
     public void setCardValue(double cardValue) {
         if (!Double.isFinite(cardValue) || cardValue < 0) {
             throw new IllegalArgumentException(
-                    "Card value must be a positive number.");
+                    "Card value cannot be negative.");
         }
         this.cardValue = cardValue;
     }
@@ -148,16 +137,103 @@ public class PokemonCard {
     public void setQuantity(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException(
-                    "Quantity must be a positive whole number.");
+                    "Quantity must be more than 1.");
         }
         this.quantity = quantity;
     }
 
+
+    /*
+     * Method: validateRarity
+     * Purpose: Checks the rarity against supported Pokémon card rarities.
+     * Arguments: rarity - the rarity entered for the card.
+     * Return: The matching standardized rarity name.
+     */
+    private String validateRarity(String rarity) {
+        String[] validRarities = {
+                // Basic rarities
+                "Common",
+                "Uncommon",
+                "Rare",
+                "Holo Rare",
+
+                // Modern rarities
+                "Double Rare",
+                "Ultra Rare",
+                "Illustration Rare",
+                "Special Illustration Rare",
+                "Hyper Rare",
+
+                // Special rarities
+                "ACE SPEC Rare",
+                "Amazing Rare",
+                "Radiant Rare",
+                "Shiny Rare",
+                "Shiny Ultra Rare",
+                "Black White Rare",
+                "Mega Attack Rare",
+                "Mega Hyper Rare",
+
+                // Promotional classification
+                "Promo"
+        };
+
+        if (rarity != null) {
+            for (String validRarity : validRarities) {
+                if (validRarity.equalsIgnoreCase(rarity.trim())) {
+                    return validRarity;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Invalid rarity. Please select a supported Pokémon card rarity.");
+    }
+
+
+
+    /*
+     * Method: validateQuality
+     * Purpose: Checks the card condition against supported choices.
+     * Arguments: quality - the condition entered for the card.
+     * Return: The matching standardized quality name.
+     */
+    private String validateQuality(String quality) {
+        String[][] validQualities = {
+                {"Near Mint", "Near Mint (NM)"},
+                {"NM", "Near Mint (NM)"},
+                {"(NM)", "Near Mint (NM)"},
+                {"Lightly Played", "Lightly Played (LP)"},
+                {"LP", "Lightly Played (LP)"},
+                {"(LP)", "Lightly Played (LP)"},
+                {"Moderately Played", "Moderately Played (MP)"},
+                {"MP", "Moderately Played (MP)"},
+                {"(MP)", "Moderately Played (MP)"},
+                {"Heavily Played", "Heavily Played (HP)"},
+                {"HP", "Heavily Played (HP)"},
+                {"(HP)", "Heavily Played (HP)"},
+                {"Damaged", "Damaged (DMG)"},
+                {"DMG", "Damaged (DMG)"},
+                {"(DMG)", "Damaged (DMG)"}
+        };
+
+        if (quality != null) {
+            for (String[] validQuality : validQualities) {
+                if (validQuality[0].equalsIgnoreCase(quality.trim())
+                        || validQuality[1].equalsIgnoreCase(quality.trim())) {
+                    return validQuality[1];
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid quality.");
+    }
+
+
     /*
      * Method: toString
-     * Purpose: Creates a formatted text description of the card,
-     * including its identifying information, individual value,
-     * quantity, and total value.
+     * Purpose: Creates a formatted description of the card, including
+     * its identifying information, individual value, quantity, and total.
      * Arguments: None.
      * Return: A String containing the card details and total value.
      */

@@ -1,11 +1,10 @@
-
 import java.io.*;
 import java.util.*;
 
 /*
  * Name: Jacob Kohler
  * Course: CEN 3024
- * Date: October 26, 2026
+ * Date: November 2, 2026
  *
  * Class: CardManager
  * Description: Manages the Pokemon card collection for the DMS.
@@ -37,8 +36,6 @@ public class CardManager {
         if (cardName == null || cardName.trim().isEmpty()
                 || setName == null || setName.trim().isEmpty()
                 || cardNumber == null || cardNumber.trim().isEmpty()
-                || rarity == null || rarity.trim().isEmpty()
-                || quality == null || quality.trim().isEmpty()
                 || !Double.isFinite(cardValue) || cardValue < 0
                 || quantity <= 0) {
             throw new IllegalArgumentException("Invalid card information.");
@@ -107,8 +104,6 @@ public class CardManager {
                         continue;
                     }
 
-
-
                     PokemonCard card = addCard(
                             data[start].trim(),
                             data[start + 1].trim(),
@@ -122,11 +117,13 @@ public class CardManager {
                         importedCards.add(card);
                     }
                 } catch (IllegalArgumentException exception) {
-                    System.out.println("Skipped invalid record.");
+                    System.out.println(
+                            "Skipped invalid record on line " + lineNumber
+                                    + ". Check the rarity, quality, value, and quantity.");
                 }
             }
         } catch (IOException exception) {
-            System.out.println("Could not open file.");
+            System.out.println("Could not open file. Check the file path and try again.");
         }
 
         return importedCards;
@@ -169,8 +166,7 @@ public class CardManager {
                                   double cardValue, int quantity) {
         PokemonCard card = findCard(cardID);
 
-        if (card == null || quality == null || quality.trim().isEmpty()
-                || !Double.isFinite(cardValue) || cardValue < 0
+        if (card == null || !Double.isFinite(cardValue) || cardValue < 0
                 || quantity < 0) {
             return null;
         }
